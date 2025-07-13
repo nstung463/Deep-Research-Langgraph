@@ -1,4 +1,3 @@
-from imaplib import Commands
 from ..config import DeepResearchState, Configuration, NodeType
 from .base import BaseNode
 from loguru import logger
@@ -17,8 +16,13 @@ class Planner(BaseNode):
         logger.info("Planner invoke method called")
         configurable = Configuration.from_runnable_config(config)
         plan_iterations = state.plan_iterations
-
+        
         logger.info(f"Plan iterations: {plan_iterations}, Max plan iterations: {configurable.max_plan_iterations}")
+
+        if plan_iterations >= configurable.max_plan_iterations:
+            return Command(
+                goto=NodeType.reporter.name,
+            )
 
         messages = self.apply_prompt_template("planner", state, configurable)
         

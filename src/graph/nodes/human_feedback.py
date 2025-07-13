@@ -2,6 +2,9 @@ from ..config import DeepResearchState, NodeType
 from .base import BaseNode
 from langchain_core.runnables.config import RunnableConfig
 from langgraph.types import Command, interrupt
+from loguru import logger
+from langchain_core.messages import HumanMessage, SystemMessage
+
 
 class HumanFeedback(BaseNode):
     def __init__(self) -> None:
@@ -23,13 +26,13 @@ class HumanFeedback(BaseNode):
                 },
                 goto="planner",
                 )
-        elif feedback and str(feedback).upper().startswith("[ACCEPTED]"):
-            logger.info("Plan is accepted by user.")
-        else:
-            raise TypeError(f"Interrupt value of {feedback} is not supported.")
+            elif feedback and str(feedback).upper().startswith("[ACCEPTED]"):
+                logger.info("Plan is accepted by user.")
+            else:
+                raise TypeError(f"Interrupt value of {feedback} is not supported.")
 
 
-        if current_plan.has_enough_context:
+        if not current_plan.has_enough_context:
             plan_iterations += 1
             goto = NodeType.research_team.name
         else:

@@ -29,6 +29,25 @@ class ChatGPT4Model:
         self.timeout = float(config.get("TIMEOUT", 60 * 5))
 
 
+class ChatGPT41Model:
+    azure_endpoint: Union[str, None]
+    api_key: Union[str, None]
+    api_version: Union[str, None]
+    azure_deployment: Union[str, None]
+    timeout: Union[float, None]
+
+    def __init__(self) -> None:
+        self.azure_endpoint = config.get("OPENAI-GPT4-1-API-BASE")
+        self.api_key = config.get("OPENAI-GPT4-1-API-KEY")
+        self.api_version = config.get(
+            "OPENAI-GPT4-1-API-VERSION", "2024-08-01-preview"
+        )
+        self.azure_deployment = config.get(
+            "OPENAI-GPT4-1-DEPLOYMENT-NAME"
+        )
+        self.timeout = float(config.get("TIMEOUT", 60 * 5))
+
+
 class ChatGPT4oMiniModel:
     azure_endpoint: Union[str, None]
     api_key: Union[str, None]
@@ -84,9 +103,10 @@ class DeepSeekModel:
 class AzureOpenAI:
     chat_gpt4_32k_model: ChatGPT4Model
     chat_gpt4_mini_model: ChatGPT4oMiniModel
+    chat_gpt4_1_model: ChatGPT41Model
 
     def __init__(self) -> None:
         self.chat_gpt4_32k_model = ChatGPT4Model()
         self.chat_gpt4_mini_model = ChatGPT4oMiniModel()
-
+        self.chat_gpt4_1_model = ChatGPT41Model()
 

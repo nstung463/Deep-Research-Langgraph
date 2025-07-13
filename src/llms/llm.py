@@ -20,6 +20,16 @@ azure_chat_openai_4 = AzureChatOpenAI(
     frequency_penalty=0.0,
 )
 
+azure_chat_openai_41 = AzureChatOpenAI(
+    **AzureOpenAI().chat_gpt4_1_model.__dict__,
+    temperature=0,
+    max_tokens=6000,
+    model="gpt-4o",
+    top_p=1.0,
+    n=1,
+    presence_penalty=0.0,
+    frequency_penalty=0.0,
+)
 
 azure_chat_openai_4_mini = AzureChatOpenAI(
     **AzureOpenAI().chat_gpt4_mini_model.__dict__,
@@ -40,5 +50,7 @@ def get_llm_by_type(llm_type: LLMType):
         return deepseek_chat
     elif llm_type == "simple_tasks":
         return azure_chat_openai_4_mini
+    elif llm_type == "gpt41":
+        return azure_chat_openai_41
     elif llm_type == "gemini":
         return open_router

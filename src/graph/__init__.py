@@ -64,7 +64,7 @@ class DeepResearchGraph:
         )
         self.graph.add_node(
             NodeType.researcher.name,
-            Researcher().invoke,
+            Researcher().ainvoke,
             retry_policy=self.retry_policy,
             cache_policy=self.cache_policy,
         )
@@ -87,6 +87,16 @@ class DeepResearchGraph:
             cache_policy=self.cache_policy,
         )  
     
+    def _add_edges(self):
+        self.graph.add_edge(START, NodeType.coordinator.name)
+        self.graph.add_edge(NodeType.background_investigation.name, NodeType.planner.name)
+        self.graph.add_edge(NodeType.reporter.name, END)
+        self.graph.add_conditional_edges(
+            NodeType.research_team.name,
+            self._add_conditional_research_team,
+            [NodeType.researcher.name, NodeType.coder.name, NodeType.planner.name]
+        )
+
     def _add_conditional_research_team(self, state: DeepResearchState):
         current_plan = state.current_plan
 
@@ -105,17 +115,6 @@ class DeepResearchGraph:
             return NodeType.coder.name
         
         return NodeType.planner.name
-
-
-    def _add_edges(self):
-        self.graph.add_edge(START, NodeType.coordinator.name)
-        self.graph.add_edge(NodeType.background_investigation.name, NodeType.planner.name)
-        self.graph.add_edge(NodeType.reporter.name, END)
-        self.graph.add_conditional_edges(
-            NodeType.research_team.name,
-            self._add_conditional_research_team,
-            [NodeType.researcher.name, NodeType.coder.name, NodeType.planner.name]
-        )
         
     def _build_graph(self, use_memory: bool = False) -> CompiledStateGraph:
         self._add_nodes()
